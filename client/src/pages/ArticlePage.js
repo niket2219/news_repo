@@ -147,6 +147,12 @@ export default function ArticlePage() {
               </div>
             )}
 
+            {/* Article Content */}
+            <div
+              style={{ ...s.content, fontFamily }}
+              dangerouslySetInnerHTML={{ __html: t(article.content, lang) }}
+            />
+
             {/* YouTube Video */}
             {youtubeEmbed && (
               <div style={s.videoWrap}>
@@ -159,12 +165,6 @@ export default function ArticlePage() {
                 />
               </div>
             )}
-
-            {/* Article Content */}
-            <div
-              style={{ ...s.content, fontFamily }}
-              dangerouslySetInnerHTML={{ __html: t(article.content, lang) }}
-            />
 
             {/* Tags */}
             {article.tags?.length > 0 && (
