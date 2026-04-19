@@ -39,6 +39,19 @@ export default function ArticlePage() {
     ? "Noto Serif Devanagari, serif"
     : "Source Serif 4, serif";
 
+  const getYoutubeEmbed = (url) => {
+    if (!url) return "";
+    const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/i);
+    if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
+    const longMatch = url.match(/[?&]v=([a-zA-Z0-9_-]+)/i);
+    if (longMatch) return `https://www.youtube.com/embed/${longMatch[1]}`;
+    const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/i);
+    if (embedMatch) return `https://www.youtube.com/embed/${embedMatch[1]}`;
+    return "";
+  };
+
+  const youtubeEmbed = getYoutubeEmbed(article.youtubeUrl);
+
   return (
     <div>
       <div className="page-wrapper">
@@ -131,6 +144,19 @@ export default function ArticlePage() {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* YouTube Video */}
+            {youtubeEmbed && (
+              <div style={s.videoWrap}>
+                <iframe
+                  src={youtubeEmbed}
+                  title="YouTube video"
+                  style={s.videoFrame}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
             )}
 
@@ -280,5 +306,21 @@ const s = {
     color: "#fff",
     fontSize: 13,
     fontWeight: 600,
+  },
+  videoWrap: {
+    position: "relative",
+    paddingTop: "56.25%",
+    borderRadius: 12,
+    overflow: "hidden",
+    background: "#0f1115",
+    marginBottom: 24,
+  },
+  videoFrame: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    border: 0,
   },
 };

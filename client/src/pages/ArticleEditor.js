@@ -30,10 +30,12 @@ export default function ArticleEditor() {
     contentHi: "",
     category: "Local",
     tags: "",
+    youtubeUrl: "",
     published: true,
   });
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
+  const [removedImages, setRemovedImages] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("en");
@@ -56,9 +58,11 @@ export default function ArticleEditor() {
           contentHi: a.content?.hi || "",
           category: a.category || "Local",
           tags: a.tags?.join(", ") || "",
+          youtubeUrl: a.youtubeUrl || "",
           published: a.published,
         });
         setExistingImages(a.images || []);
+        setRemovedImages([]);
       });
     }
   }, [id, user, authLoading]);
@@ -82,6 +86,22 @@ export default function ArticleEditor() {
     e.target.value = "";
   };
 
+  const removePreview = (index) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingImage = (index) => {
+    setExistingImages((prev) => {
+      const next = prev.filter((_, i) => i !== index);
+      const removed = prev[index];
+      if (removed?.url) {
+        setRemovedImages((list) => [...list, removed.url]);
+      }
+      return next;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.titleEn || !form.titleHi || !form.contentEn || !form.contentHi) {
@@ -93,6 +113,11 @@ export default function ArticleEditor() {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => fd.append(k, v));
       images.forEach((img) => fd.append("images", img));
+
+      if (isEdit) {
+        fd.append("existingImages", JSON.stringify(existingImages));
+        fd.append("removedImages", JSON.stringify(removedImages));
+      }
 
       if (isEdit) {
         await API.put(`/articles/${id}`, fd, {
@@ -162,6 +187,16 @@ export default function ArticleEditor() {
               placeholder="e.g. politics, india, election"
             />
           </div>
+        </div>
+
+        <div style={s.field}>
+          <label style={s.label}>YouTube Video Link</label>
+          <input
+            style={s.input}
+            value={form.youtubeUrl}
+            onChange={set("youtubeUrl")}
+            placeholder="https://www.youtube.com/watch?v=..."
+          />
         </div>
 
         {/* Language Tabs */}
@@ -290,7 +325,16 @@ export default function ArticleEditor() {
               {existingImages.map((img, i) => (
                 <div key={i} style={s.imgWrap}>
                   <img src={img.url} alt="" style={s.imgThumb} />
-                  {i === 0 && <span style={s.coverTag}>Cover</span>}
+                  <button
+                    type="button"
+                    style={s.removeBtn}
+                    onClick={() => removeExistingImage(i)}
+                  >
+                    ✕
+                  </button>
+                  {i === 0 && existingImages.length > 0 && (
+                    <span style={s.coverTag}>Cover</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -327,6 +371,13 @@ export default function ArticleEditor() {
               {previews.map((p, i) => (
                 <div key={i} style={s.imgWrap}>
                   <img src={p} alt="" style={s.imgThumb} />
+                  <button
+                    type="button"
+                    style={s.removeBtn}
+                    onClick={() => removePreview(i)}
+                  >
+                    ✕
+                  </button>
                   {i === 0 && existingImages.length === 0 && (
                     <span style={s.coverTag}>Cover</span>
                   )}
@@ -442,6 +493,22 @@ const s = {
   },
   imgRow: { display: "flex", gap: 10, flexWrap: "wrap", marginTop: 12 },
   imgWrap: { position: "relative" },
+  removeBtn: {
+    position: "absolute",
+    top: -6,
+    right: -6,
+    width: 22,
+    height: 22,
+    borderRadius: "50%",
+    background: "#1f2937",
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: 700,
+    display: "grid",
+    placeItems: "center",
+    border: "2px solid #fff",
+    cursor: "pointer",
+  },
   imgThumb: {
     width: 90,
     height: 70,
