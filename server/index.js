@@ -20,6 +20,10 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
 
+app.get("/", (req, res) => {
+  return res.json({ message: "Welcome to the News API" });
+});
+
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/newsdb")
