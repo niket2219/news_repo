@@ -153,19 +153,6 @@ export default function ArticlePage() {
               dangerouslySetInnerHTML={{ __html: t(article.content, lang) }}
             />
 
-            {/* YouTube Video */}
-            {youtubeEmbed && (
-              <div style={s.videoWrap}>
-                <iframe
-                  src={youtubeEmbed}
-                  title="YouTube video"
-                  style={s.videoFrame}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            )}
-
             {/* Tags */}
             {article.tags?.length > 0 && (
               <div style={s.tags}>
@@ -188,6 +175,21 @@ export default function ArticlePage() {
               ))}
             </div>
           </article>
+
+          {youtubeEmbed && (
+            <section style={s.videoCard}>
+              <h3 style={s.videoTitle}>Video</h3>
+              <div style={s.videoWrap}>
+                <iframe
+                  src={youtubeEmbed}
+                  title="YouTube video"
+                  style={s.videoFrame}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </section>
+          )}
         </main>
 
         {/* Right Sidebar */}
@@ -306,6 +308,19 @@ const s = {
     color: "#fff",
     fontSize: 13,
     fontWeight: 600,
+  },
+  videoCard: {
+    marginTop: 24,
+    background: "#fff",
+    borderRadius: 12,
+    padding: "24px",
+    boxShadow: "0 2px 16px rgba(0,0,0,0.06)",
+  },
+  videoTitle: {
+    fontFamily: "Space Grotesk, sans-serif",
+    fontSize: 16,
+    fontWeight: 700,
+    marginBottom: 12,
   },
   videoWrap: {
     position: "relative",
