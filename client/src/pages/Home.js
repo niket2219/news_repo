@@ -284,6 +284,7 @@ const s = {
     alignItems: "center",
     overflow: "hidden",
     height: 36,
+    position: "relative",
   },
   tickerLabel: {
     background: "#ff6a3d",
@@ -295,11 +296,17 @@ const s = {
     fontSize: 12,
     letterSpacing: 1,
     flexShrink: 0,
+    position: "relative",
+    zIndex: 1,
   },
   tickerTrack: {
     display: "flex",
     animation: "ticker 30s linear infinite",
     paddingLeft: 16,
+    flex: 1,
+    overflow: "hidden",
+    position: "relative",
+    zIndex: 0,
   },
   tickerItem: {
     whiteSpace: "nowrap",
