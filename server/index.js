@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const articleRoutes = require("./routes/articles");
+const adRoutes = require("./routes/ads");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
+app.use("/api/ads", adRoutes);
 
 app.get("/", (req, res) => {
   return res.json({ message: "Welcome to the News API" });

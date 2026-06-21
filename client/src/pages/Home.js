@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API, { resolveImageUrl } from "../utils/api";
 import { useLang, t } from "../context/LangContext";
 import ArticleCard from "../components/ArticleCard";
+import Ad from "../components/Ad";
 import Sidebar from "../components/Sidebar";
 import { format } from "date-fns";
 
@@ -26,6 +27,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(1);
   const [activeCategory, setActiveCategory] = useState("");
   const [loading, setLoading] = useState(true);
+  const [ads, setAds] = useState([]);
 
   useEffect(() => {
     API.get("/articles/latest")
@@ -45,6 +47,12 @@ export default function Home() {
       })
       .catch(() => setLoading(false));
   }, [page, activeCategory]);
+
+  useEffect(() => {
+    API.get("/ads?page=home&placement=banner")
+      .then((r) => setAds(r.data))
+      .catch(() => {});
+  }, []);
 
   const heroMain = latest[0];
   const heroSide = latest.slice(1, 4);
@@ -212,15 +220,36 @@ export default function Home() {
             </div>
           ) : (
             <div style={s.grid}>
-              {articles.map((article, idx) => (
-                <div
-                  key={article._id}
-                  className="reveal"
-                  style={{ "--i": idx % 6 }}
-                >
-                  <ArticleCard article={article} />
-                </div>
-              ))}
+              {articles
+                .map((article, idx) => {
+                  const elements = [];
+
+                  // Add article
+                  elements.push(
+                    <div
+                      key={article._id}
+                      className="reveal"
+                      style={{ "--i": idx % 6 }}
+                    >
+                      <ArticleCard article={article} />
+                    </div>,
+                  );
+
+                  // Add ad every 3 articles if available
+                  if ((idx + 1) % 3 === 0 && ads.length > 0) {
+                    const adIndex = Math.floor((idx + 1) / 3) - 1;
+                    if (adIndex < ads.length) {
+                      elements.push(
+                        <div key={`ad-${idx}`} style={{ gridColumn: "1 / -1" }}>
+                          <Ad ad={ads[adIndex]} />
+                        </div>,
+                      );
+                    }
+                  }
+
+                  return elements;
+                })
+                .flat()}
             </div>
           )}
 
