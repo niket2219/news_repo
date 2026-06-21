@@ -90,9 +90,17 @@ export default function AdminDashboard() {
             <p style={s.sub}>Welcome back, {user?.name}</p>
           </div>
         </div>
-        <button style={s.newBtn} onClick={() => navigate("/admin/article/new")}>
-          + New Article
-        </button>
+        <div style={{ display: "flex", gap: 12 }}>
+          <button
+            style={s.newBtn}
+            onClick={() => navigate("/admin/article/new")}
+          >
+            + New Article
+          </button>
+          <button style={s.newBtn} onClick={() => navigate("/admin/ads")}>
+            📢 Manage Ads
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
