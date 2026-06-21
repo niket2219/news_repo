@@ -77,9 +77,18 @@ export default function AdminDashboard() {
   return (
     <div style={s.page}>
       <div style={s.header}>
-        <div>
-          <h1 style={s.title}>Admin Dashboard</h1>
-          <p style={s.sub}>Welcome back, {user?.name}</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <button
+            style={s.backBtn}
+            onClick={() => navigate("/")}
+            title="Go back to Home"
+          >
+            ← Back
+          </button>
+          <div>
+            <h1 style={s.title}>Admin Dashboard</h1>
+            <p style={s.sub}>Welcome back, {user?.name}</p>
+          </div>
         </div>
         <button style={s.newBtn} onClick={() => navigate("/admin/article/new")}>
           + New Article
@@ -245,6 +254,17 @@ const s = {
     borderRadius: 8,
     fontWeight: 700,
     fontSize: 15,
+  },
+  backBtn: {
+    background: "#f0f0f0",
+    color: "#333",
+    padding: "10px 16px",
+    borderRadius: 8,
+    fontWeight: 600,
+    fontSize: 14,
+    border: "none",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
   },
   stats: {
     display: "grid",

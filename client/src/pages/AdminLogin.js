@@ -32,8 +32,8 @@ export default function AdminLogin() {
   return (
     <div style={s.page}>
       <div style={s.card}>
-        <div style={s.logoHi}>समाचार</div>
-        <div style={s.logoEn}>ADMIN PANEL</div>
+        <div style={s.logoHi}>हम है ना</div>
+        <div style={s.logoEn}>HAM HAI NA</div>
         <h2 style={s.heading}>Sign In</h2>
         <form onSubmit={handleSubmit} style={s.form}>
           <div style={s.field}>

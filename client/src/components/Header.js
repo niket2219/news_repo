@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLang } from "../context/LangContext";
 import { useAuth } from "../context/AuthContext";
+import logo from "../logo.jpeg";
 
 const CATEGORIES = [
   "Politics",
@@ -30,10 +31,20 @@ export default function Header() {
       <div className="top-bar">
         <div className="container top-inner">
           <Link to="/" className="brand top-brand">
-            <div className="brand-icon">🗞️</div>
+            <img
+              src={logo}
+              alt="Ham Hai Na Logo"
+              className="brand-logo"
+              style={{
+                width: 45,
+                height: 45,
+                objectFit: "contain",
+                borderRadius: 4,
+              }}
+            />
             <div>
-              <div className="brand-hi">समाचार</div>
-              <div className="brand-en">NEWS CHANNEL</div>
+              <div className="brand-hi">हम है ना</div>
+              <div className="brand-en">HAM HAI NA</div>
             </div>
           </Link>
           <span className="top-date">{formattedDate}</span>

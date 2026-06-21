@@ -6,8 +6,8 @@ export default function Footer() {
     <footer style={s.footer}>
       <div style={s.inner}>
         <div style={s.brand}>
-          <div style={s.logoHi}>समाचार</div>
-          <div style={s.logoEn}>NEWS CHANNEL</div>
+          <div style={s.logoHi}>हम है ना</div>
+          <div style={s.logoEn}>HAM HAI NA</div>
           <p style={s.tagline}>Your trusted source for Hindi & English news</p>
         </div>
         <div style={s.links}>
@@ -54,7 +54,7 @@ export default function Footer() {
         </div>
       </div>
       <div style={s.bottom}>
-        <p>© {new Date().getFullYear()} News Channel. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Ham Hai Na. All rights reserved.</p>
       </div>
     </footer>
   );
