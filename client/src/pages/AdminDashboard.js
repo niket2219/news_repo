@@ -10,6 +10,8 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -39,16 +41,20 @@ export default function AdminDashboard() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this article?")) return;
+    setDeletingId(id);
     try {
       await API.delete(`/articles/${id}`);
       toast.success("Article deleted");
       setArticles((a) => a.filter((x) => x._id !== id));
     } catch {
       toast.error("Error deleting");
+    } finally {
+      setDeletingId(null);
     }
   };
 
   const togglePublish = async (article) => {
+    setTogglingId(article._id);
     try {
       await API.put(`/articles/${article._id}`, {
         titleHi: article.title.hi,
@@ -65,6 +71,8 @@ export default function AdminDashboard() {
       fetchArticles();
     } catch {
       toast.error("Error updating");
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -193,6 +201,10 @@ export default function AdminDashboard() {
                         <button
                           style={s.actionBtn}
                           onClick={() => navigate(`/article/${article._id}`)}
+                          disabled={
+                            deletingId === article._id ||
+                            togglingId === article._id
+                          }
                         >
                           View
                         </button>
@@ -200,6 +212,10 @@ export default function AdminDashboard() {
                           style={s.actionBtn}
                           onClick={() =>
                             navigate(`/admin/article/edit/${article._id}`)
+                          }
+                          disabled={
+                            deletingId === article._id ||
+                            togglingId === article._id
                           }
                         >
                           Edit
@@ -213,8 +229,16 @@ export default function AdminDashboard() {
                             color: article.published ? "#e65100" : "#2e7d32",
                           }}
                           onClick={() => togglePublish(article)}
+                          disabled={
+                            deletingId === article._id ||
+                            togglingId === article._id
+                          }
                         >
-                          {article.published ? "Unpublish" : "Publish"}
+                          {togglingId === article._id
+                            ? "⏳ Saving..."
+                            : article.published
+                              ? "Unpublish"
+                              : "Publish"}
                         </button>
                         <button
                           style={{
@@ -223,8 +247,14 @@ export default function AdminDashboard() {
                             color: "#c62828",
                           }}
                           onClick={() => handleDelete(article._id)}
+                          disabled={
+                            deletingId === article._id ||
+                            togglingId === article._id
+                          }
                         >
-                          Delete
+                          {deletingId === article._id
+                            ? "⏳ Deleting..."
+                            : "Delete"}
                         </button>
                       </div>
                     </td>

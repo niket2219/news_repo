@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import API from "../utils/api";
+import { resolveImageUrl } from "../utils/api";
 
 export default function Ad({ ad }) {
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function Ad({ ad }) {
       onClick={handleClick}
     >
       <img
-        src={ad.imageUrl}
+        src={resolveImageUrl(ad.imageUrl)}
         alt={ad.title}
         style={{
           width: "100%",

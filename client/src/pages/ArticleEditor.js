@@ -38,6 +38,7 @@ export default function ArticleEditor() {
   const [removedImages, setRemovedImages] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingArticle, setLoadingArticle] = useState(isEdit);
   const [activeTab, setActiveTab] = useState("en");
 
   useEffect(() => {
@@ -47,23 +48,28 @@ export default function ArticleEditor() {
       return;
     }
     if (isEdit) {
-      API.get(`/articles/${id}`).then((r) => {
-        const a = r.data;
-        setForm({
-          titleEn: a.title?.en || "",
-          titleHi: a.title?.hi || "",
-          summaryEn: a.summary?.en || "",
-          summaryHi: a.summary?.hi || "",
-          contentEn: a.content?.en || "",
-          contentHi: a.content?.hi || "",
-          category: a.category || "Local",
-          tags: a.tags?.join(", ") || "",
-          youtubeUrl: a.youtubeUrl || "",
-          published: a.published,
-        });
-        setExistingImages(a.images || []);
-        setRemovedImages([]);
-      });
+      setLoadingArticle(true);
+      API.get(`/articles/${id}`)
+        .then((r) => {
+          const a = r.data;
+          setForm({
+            titleEn: a.title?.en || "",
+            titleHi: a.title?.hi || "",
+            summaryEn: a.summary?.en || "",
+            summaryHi: a.summary?.hi || "",
+            contentEn: a.content?.en || "",
+            contentHi: a.content?.hi || "",
+            category: a.category || "Local",
+            tags: a.tags?.join(", ") || "",
+            youtubeUrl: a.youtubeUrl || "",
+            published: a.published,
+          });
+          setExistingImages(a.images || []);
+          setRemovedImages([]);
+        })
+        .finally(() => setLoadingArticle(false));
+    } else {
+      setLoadingArticle(false);
     }
   }, [id, user, authLoading]);
 
@@ -71,6 +77,15 @@ export default function ArticleEditor() {
     return (
       <div style={{ padding: 60, textAlign: "center", color: "#999" }}>
         Checking session...
+      </div>
+    );
+  }
+
+  if (loadingArticle) {
+    return (
+      <div style={{ padding: 60, textAlign: "center", color: "#999" }}>
+        <div style={s.spinner} />
+        <div style={{ marginTop: 12 }}>Loading article...</div>
       </div>
     );
   }
@@ -393,6 +408,7 @@ export default function ArticleEditor() {
             type="button"
             style={s.cancelBtn}
             onClick={() => navigate("/admin")}
+            disabled={loading}
           >
             Cancel
           </button>
@@ -550,5 +566,14 @@ const s = {
     fontSize: 15,
     fontWeight: 700,
     cursor: "pointer",
+  },
+  spinner: {
+    width: 40,
+    height: 40,
+    border: "4px solid #eee",
+    borderTop: "4px solid #ff6a3d",
+    borderRadius: "50%",
+    margin: "0 auto",
+    animation: "spin 0.8s linear infinite",
   },
 };
