@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../utils/api";
 import { resolveImageUrl } from "../utils/api";
 import toast from "react-hot-toast";
 
 export default function AdsManager() {
+  const navigate = useNavigate();
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -137,7 +139,17 @@ export default function AdsManager() {
 
   return (
     <div style={s.page}>
-      <h1 style={s.title}>📢 Manage Advertisements</h1>
+      <h1 style={s.title}>
+        <button
+          type="button"
+          onClick={() => navigate("/admin")}
+          style={s.backBtn}
+          aria-label="Back to dashboard"
+        >
+          ← Back
+        </button>{" "}
+        📢 Manage Advertisements
+      </h1>
 
       <div style={s.container}>
         <form onSubmit={handleSubmit} style={s.form}>
@@ -269,16 +281,13 @@ export default function AdsManager() {
                       📍 {ad.position.page} - {ad.position.placement}
                     </p>
                     <p>
-                      ✓ Status:{" "}
-                      <span
-                        style={{ color: ad.isActive ? "#4caf50" : "#f44336" }}
-                      >
+                      ✓ Status: {" "}
+                      <span style={{ color: ad.isActive ? "#4caf50" : "#f44336" }}>
                         {ad.isActive ? "Active" : "Inactive"}
                       </span>
                     </p>
                     <p>
-                      👁 {ad.impressions} impressions | 🔗 {ad.clickCount}{" "}
-                      clicks
+                      👁 {ad.impressions} impressions | 🔗 {ad.clickCount} clicks
                     </p>
                   </div>
                   <div style={s.adActions}>
@@ -313,6 +322,15 @@ const s = {
     fontFamily: "Playfair Display, serif",
     fontSize: 28,
     marginBottom: 32,
+  },
+  backBtn: {
+    marginRight: 12,
+    padding: "6px 10px",
+    borderRadius: 6,
+    border: "1px solid #ddd",
+    background: "#fff",
+    cursor: "pointer",
+    fontSize: 14,
   },
   container: { display: "grid", gridTemplateColumns: "1fr 2fr", gap: 32 },
   form: {
@@ -372,12 +390,7 @@ const s = {
     gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
     gap: 16,
   },
-  empty: {
-    gridColumn: "1 / -1",
-    textAlign: "center",
-    padding: 40,
-    color: "#999",
-  },
+  empty: { gridColumn: "1 / -1", textAlign: "center", padding: 40, color: "#999" },
   adCard: {
     background: "#fff",
     borderRadius: 8,

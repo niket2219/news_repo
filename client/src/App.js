@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import { LangProvider } from "./context/LangContext";
@@ -19,7 +19,8 @@ import "./styles/global.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    // HashRouter prevents server 404 on page refresh for static hosts that don't return index.html for every route
+    <HashRouter>
       <AuthProvider>
         <LangProvider>
           <Toaster
@@ -29,7 +30,7 @@ function App() {
           <AppRoutes />
         </LangProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

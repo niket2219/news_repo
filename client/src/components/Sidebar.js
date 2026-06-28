@@ -3,15 +3,24 @@ import { useNavigate } from "react-router-dom";
 import { useLang, t } from "../context/LangContext";
 import API, { resolveImageUrl } from "../utils/api";
 import { format } from "date-fns";
+import Ad from "./Ad";
 
 export default function Sidebar() {
   const { lang } = useLang();
   const navigate = useNavigate();
   const [latest, setLatest] = useState([]);
+  const [ads, setAds] = useState([]);
 
   useEffect(() => {
     API.get("/articles/latest")
       .then((r) => setLatest(r.data))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    // Fetch sidebar ads
+    API.get("/ads?page=home&placement=sidebar")
+      .then((r) => setAds(r.data))
       .catch(() => {});
   }, []);
 
@@ -78,13 +87,28 @@ export default function Sidebar() {
             onClick={() => navigate(`/category/${cat}`)}
           >
             <span>{getCatIcon(cat)}</span>
-            <span style={{ flex: 1 }}>
-              {lang === "hi" ? getCatHi(cat) : cat}
-            </span>
+            <span style={{ flex: 1 }}>{lang === "hi" ? getCatHi(cat) : cat}</span>
             <span style={s.arrow}>›</span>
           </div>
         ))}
       </div>
+
+      {/* Sidebar Advertisements */}
+      {ads.length > 0 && (
+        <div style={s.widget}>
+          <div style={s.widgetHead}>
+            <span style={s.redBar} />
+            {lang === "hi" ? "विज्ञापन" : "Advertisement"}
+          </div>
+          <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 12 }}>
+            {ads.map((a) => (
+              <div key={a._id}>
+                <Ad ad={a} variant="sidebar" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </aside>
   );
 }
@@ -99,7 +123,7 @@ const getCatIcon = (c) =>
     Health: "🏥",
     World: "🌍",
     Local: "📍",
-  })[c] || "📰";
+  }[c] || "📰");
 const getCatHi = (c) =>
   ({
     Politics: "राजनीति",
@@ -110,7 +134,7 @@ const getCatHi = (c) =>
     Health: "स्वास्थ्य",
     World: "विश्व",
     Local: "स्थानीय",
-  })[c] || c;
+  }[c] || c);
 
 const s = {
   widget: {

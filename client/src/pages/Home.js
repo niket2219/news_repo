@@ -62,16 +62,10 @@ export default function Home() {
       {/* Breaking news ticker */}
       {latest.length > 0 && (
         <div style={s.ticker}>
-          <span style={s.tickerLabel}>
-            {lang === "hi" ? "ब्रेकिंग" : "BREAKING"}
-          </span>
+          <span style={s.tickerLabel}>{lang === "hi" ? "ब्रेकिंग" : "BREAKING"}</span>
           <div style={s.tickerTrack}>
             {latest.map((a) => (
-              <span
-                key={a._id}
-                style={s.tickerItem}
-                onClick={() => navigate(`/article/${a._id}`)}
-              >
+              <span key={a._id} style={s.tickerItem} onClick={() => navigate(`/article/${a._id}`)}>
                 {t(a.title, lang)} &nbsp;&nbsp;•&nbsp;&nbsp;
               </span>
             ))}
@@ -85,15 +79,9 @@ export default function Home() {
           {/* Hero Section */}
           {heroMain && (
             <div className="hero-grid">
-              <div
-                className="hero-main reveal"
-                onClick={() => navigate(`/article/${heroMain._id}`)}
-              >
+              <div className="hero-main reveal" onClick={() => navigate(`/article/${heroMain._id}`)}>
                 {heroMain.coverImage ? (
-                  <img
-                    src={resolveImageUrl(heroMain.coverImage)}
-                    alt={t(heroMain.title, lang)}
-                  />
+                  <img src={resolveImageUrl(heroMain.coverImage)} alt={t(heroMain.title, lang)} />
                 ) : (
                   <div
                     style={{
@@ -108,66 +96,28 @@ export default function Home() {
                   <span className="category-badge">{heroMain.category}</span>
                   <h2
                     style={{
-                      fontFamily:
-                        lang === "hi"
-                          ? "Noto Serif Devanagari, serif"
-                          : undefined,
+                      fontFamily: lang === "hi" ? "Noto Serif Devanagari, serif" : undefined,
                     }}
                   >
                     {t(heroMain.title, lang)}
                   </h2>
-                  <p
-                    style={{
-                      color: "rgba(255,255,255,0.7)",
-                      fontSize: 13,
-                      marginTop: 6,
-                    }}
-                  >
+                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 6 }}>
                     {format(new Date(heroMain.createdAt), "dd MMM yyyy")}
                   </p>
                 </div>
               </div>
               <div className="hero-side">
                 {heroSide.map((a, idx) => (
-                  <div
-                    key={a._id}
-                    className="hero-side-item reveal"
-                    style={{ "--i": idx + 1 }}
-                    onClick={() => navigate(`/article/${a._id}`)}
-                  >
+                  <div key={a._id} className="hero-side-item reveal" style={{ "--i": idx + 1 }} onClick={() => navigate(`/article/${a._id}`)}>
                     {a.coverImage ? (
-                      <img
-                        src={resolveImageUrl(a.coverImage)}
-                        alt={t(a.title, lang)}
-                      />
+                      <img src={resolveImageUrl(a.coverImage)} alt={t(a.title, lang)} />
                     ) : (
-                      <div
-                        style={{
-                          width: 100,
-                          height: 80,
-                          background: "#ddd",
-                          flexShrink: 0,
-                        }}
-                      />
+                      <div style={{ width: 100, height: 80, background: "#ddd", flexShrink: 0 }} />
                     )}
                     <div className="hero-side-item-body">
-                      <span className="category-badge" style={{ fontSize: 10 }}>
-                        {a.category}
-                      </span>
-                      <h4
-                        style={{
-                          marginTop: 4,
-                          fontFamily:
-                            lang === "hi"
-                              ? "Noto Serif Devanagari, serif"
-                              : undefined,
-                        }}
-                      >
-                        {t(a.title, lang)}
-                      </h4>
-                      <p style={{ fontSize: 11, color: "#999", marginTop: 4 }}>
-                        {format(new Date(a.createdAt), "dd MMM yyyy")}
-                      </p>
+                      <span className="category-badge" style={{ fontSize: 10 }}>{a.category}</span>
+                      <h4 style={{ marginTop: 4, fontFamily: lang === "hi" ? "Noto Serif Devanagari, serif" : undefined }}>{t(a.title, lang)}</h4>
+                      <p style={{ fontSize: 11, color: "#999", marginTop: 4 }}>{format(new Date(a.createdAt), "dd MMM yyyy")}</p>
                     </div>
                   </div>
                 ))}
@@ -208,11 +158,7 @@ export default function Home() {
 
           {/* Articles Grid */}
           {loading ? (
-            <div style={s.loading}>
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} style={s.skeleton} />
-              ))}
-            </div>
+            <div style={s.loading}>{[1, 2, 3, 4, 5, 6].map((i) => <div key={i} style={s.skeleton} />)}</div>
           ) : articles.length === 0 ? (
             <div style={s.empty}>
               <span style={{ fontSize: 48 }}>📭</span>
@@ -226,11 +172,7 @@ export default function Home() {
 
                   // Add article
                   elements.push(
-                    <div
-                      key={article._id}
-                      className="reveal"
-                      style={{ "--i": idx % 6 }}
-                    >
+                    <div key={article._id} className="reveal" style={{ "--i": idx % 6 }}>
                       <ArticleCard article={article} />
                     </div>,
                   );
@@ -241,7 +183,7 @@ export default function Home() {
                     if (adIndex < ads.length) {
                       elements.push(
                         <div key={`ad-${idx}`} style={{ gridColumn: "1 / -1" }}>
-                          <Ad ad={ads[adIndex]} />
+                          <Ad ad={ads[adIndex]} variant="banner" />
                         </div>,
                       );
                     }
@@ -256,30 +198,15 @@ export default function Home() {
           {/* Pagination */}
           {totalPages > 1 && (
             <div style={s.pagination}>
-              <button
-                style={s.pageBtn}
-                disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
-              >
+              <button style={s.pageBtn} disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
                 ← Prev
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button
-                  key={p}
-                  style={{
-                    ...s.pageBtn,
-                    ...(page === p ? s.pageBtnActive : {}),
-                  }}
-                  onClick={() => setPage(p)}
-                >
+                <button key={p} style={{ ...s.pageBtn, ...(page === p ? s.pageBtnActive : {}) }} onClick={() => setPage(p)}>
                   {p}
                 </button>
               ))}
-              <button
-                style={s.pageBtn}
-                disabled={page === totalPages}
-                onClick={() => setPage((p) => p + 1)}
-              >
+              <button style={s.pageBtn} disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
                 Next →
               </button>
             </div>
@@ -303,7 +230,7 @@ const getCatHi = (c) =>
     Health: "स्वास्थ्य",
     World: "विश्व",
     Local: "स्थानीय",
-  })[c] || c;
+  }[c] || c);
 
 const s = {
   ticker: {
@@ -337,79 +264,15 @@ const s = {
     position: "relative",
     zIndex: 0,
   },
-  tickerItem: {
-    whiteSpace: "nowrap",
-    fontSize: 13,
-    cursor: "pointer",
-    padding: "0 8px",
-  },
-  catFilter: {
-    display: "flex",
-    gap: 8,
-    flexWrap: "wrap",
-    margin: "24px 0 16px",
-    alignItems: "center",
-  },
-  catBtn: {
-    padding: "6px 14px",
-    borderRadius: 20,
-    border: "1.5px solid #ddd",
-    background: "#fff",
-    fontSize: 13,
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "all 0.2s",
-    color: "#555",
-  },
-  catBtnActive: {
-    background: "#ff6a3d",
-    borderColor: "#ff6a3d",
-    color: "#fff",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-    gap: 20,
-    marginBottom: 32,
-  },
-  loading: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-    gap: 20,
-  },
-  skeleton: {
-    height: 300,
-    borderRadius: 8,
-    background: "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
-    backgroundSize: "200% 100%",
-    animation: "shimmer 1.5s infinite",
-  },
-  empty: {
-    textAlign: "center",
-    padding: "60px 0",
-    color: "#999",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 12,
-  },
-  pagination: {
-    display: "flex",
-    gap: 8,
-    justifyContent: "center",
-    margin: "32px 0",
-  },
-  pageBtn: {
-    padding: "8px 14px",
-    borderRadius: 6,
-    border: "1.5px solid #ddd",
-    background: "#fff",
-    fontSize: 14,
-    cursor: "pointer",
-  },
-  pageBtnActive: {
-    background: "#ff6a3d",
-    borderColor: "#ff6a3d",
-    color: "#fff",
-  },
+  tickerItem: { whiteSpace: "nowrap", fontSize: 13, cursor: "pointer", padding: "0 8px" },
+  catFilter: { display: "flex", gap: 8, flexWrap: "wrap", margin: "24px 0 16px", alignItems: "center" },
+  catBtn: { padding: "6px 14px", borderRadius: 20, border: "1.5px solid #ddd", background: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", color: "#555" },
+  catBtnActive: { background: "#ff6a3d", borderColor: "#ff6a3d", color: "#fff" },
+  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20, marginBottom: 32 },
+  loading: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 },
+  skeleton: { height: 300, borderRadius: 8, background: "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite" },
+  empty: { textAlign: "center", padding: "60px 0", color: "#999", display: "flex", flexDirection: "column", alignItems: "center", gap: 12 },
+  pagination: { display: "flex", gap: 8, justifyContent: "center", margin: "32px 0" },
+  pageBtn: { padding: "8px 14px", borderRadius: 6, border: "1.5px solid #ddd", background: "#fff", fontSize: 14, cursor: "pointer" },
+  pageBtnActive: { background: "#ff6a3d", borderColor: "#ff6a3d", color: "#fff" },
 };
