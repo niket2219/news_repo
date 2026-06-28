@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import API from "../utils/api";
+import { resolveImageUrl } from "../utils/api";
 import toast from "react-hot-toast";
 
 export default function AdsManager() {
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -34,13 +37,16 @@ export default function AdsManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
       if (!formData.title) {
         toast.error("Title is required");
+        setSaving(false);
         return;
       }
       if (!formData.imageUrl && !file) {
         toast.error("Image is required");
+        setSaving(false);
         return;
       }
 
@@ -74,11 +80,14 @@ export default function AdsManager() {
         error.response?.data?.error || error.message || "Error saving ad";
       toast.error(errMsg);
       console.error("Ad save error:", error);
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this ad?")) return;
+    setDeletingId(id);
     try {
       await API.delete(`/ads/${id}`);
       toast.success("Ad deleted");
@@ -87,6 +96,8 @@ export default function AdsManager() {
       const errMsg = error.response?.data?.error || "Error deleting ad";
       toast.error(errMsg);
       console.error("Delete error:", error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -117,7 +128,12 @@ export default function AdsManager() {
   };
 
   if (loading)
-    return <div style={{ padding: 40, textAlign: "center" }}>Loading...</div>;
+    return (
+      <div style={{ padding: 40, textAlign: "center" }}>
+        <div style={s.spinner} />
+        <div style={{ marginTop: 12, color: "#666" }}>Loading ads...</div>
+      </div>
+    );
 
   return (
     <div style={s.page}>
@@ -163,8 +179,13 @@ export default function AdsManager() {
               style={s.input}
             />
             {formData.imageUrl && !file && (
-              <div style={{ fontSize: 12, color: "#888", marginTop: 8 }}>
-                Current image: {formData.imageUrl}
+              <div style={s.previewWrap}>
+                <img
+                  src={resolveImageUrl(formData.imageUrl)}
+                  alt="Current ad"
+                  style={s.previewImg}
+                />
+                <div style={{ fontSize: 12, color: "#888" }}>Current image</div>
               </div>
             )}
           </div>
@@ -214,11 +235,16 @@ export default function AdsManager() {
           </div>
 
           <div style={s.formActions}>
-            <button type="submit" style={s.submitBtn}>
-              {editingId ? "Update Ad" : "Create Ad"}
+            <button type="submit" style={s.submitBtn} disabled={saving}>
+              {saving ? "⏳ Saving..." : editingId ? "Update Ad" : "Create Ad"}
             </button>
             {editingId && (
-              <button type="button" onClick={resetForm} style={s.cancelBtn}>
+              <button
+                type="button"
+                onClick={resetForm}
+                style={s.cancelBtn}
+                disabled={saving}
+              >
                 Cancel
               </button>
             )}
@@ -231,7 +257,11 @@ export default function AdsManager() {
           ) : (
             ads.map((ad) => (
               <div key={ad._id} style={s.adCard}>
-                <img src={ad.imageUrl} alt={ad.title} style={s.adImage} />
+                <img
+                  src={resolveImageUrl(ad.imageUrl)}
+                  alt={ad.title}
+                  style={s.adImage}
+                />
                 <div style={s.adCardBody}>
                   <h3 style={s.adTitle}>{ad.title}</h3>
                   <div style={s.adInfo}>
@@ -252,14 +282,19 @@ export default function AdsManager() {
                     </p>
                   </div>
                   <div style={s.adActions}>
-                    <button onClick={() => handleEdit(ad)} style={s.editBtn}>
+                    <button
+                      onClick={() => handleEdit(ad)}
+                      style={s.editBtn}
+                      disabled={saving || deletingId === ad._id}
+                    >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(ad._id)}
                       style={s.deleteBtn}
+                      disabled={saving || deletingId === ad._id}
                     >
-                      Delete
+                      {deletingId === ad._id ? "⏳ Deleting..." : "Delete"}
                     </button>
                   </div>
                 </div>
@@ -365,6 +400,14 @@ const s = {
     cursor: "pointer",
     flex: 1,
   },
+  previewWrap: { marginTop: 8, display: "grid", gap: 8 },
+  previewImg: {
+    width: "100%",
+    maxHeight: 140,
+    objectFit: "cover",
+    borderRadius: 8,
+    border: "1px solid #eee",
+  },
   deleteBtn: {
     background: "#f44336",
     color: "#fff",
@@ -374,5 +417,14 @@ const s = {
     fontWeight: 600,
     cursor: "pointer",
     flex: 1,
+  },
+  spinner: {
+    width: 34,
+    height: 34,
+    border: "4px solid #eee",
+    borderTop: "4px solid #ff6a3d",
+    borderRadius: "50%",
+    margin: "0 auto",
+    animation: "spin 0.8s linear infinite",
   },
 };

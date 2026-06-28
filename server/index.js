@@ -1,4 +1,5 @@
 const dns = require("dns");
+const path = require("path");
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 require("dotenv").config();
@@ -15,6 +16,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const clientBuildPath = path.join(__dirname, "..", "client", "build");
+app.use(express.static(clientBuildPath));
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
@@ -22,6 +26,13 @@ app.use("/api/ads", adRoutes);
 
 app.get("/", (req, res) => {
   return res.json({ message: "Welcome to the News API" });
+});
+
+app.get(/^(?!\/api).*/, (req, res, next) => {
+  if (req.method !== "GET") return next();
+  res.sendFile(path.join(clientBuildPath, "index.html"), (err) => {
+    if (err) next();
+  });
 });
 
 // MongoDB Connection

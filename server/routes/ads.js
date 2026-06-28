@@ -2,8 +2,21 @@ const express = require("express");
 const Ad = require("../models/Ad");
 const { protect } = require("../middleware/auth");
 const upload = require("../middleware/upload");
+const cloudinary = require("../config/cloudinary");
 
 const router = express.Router();
+
+const uploadToCloudinary = (file) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "news-app/ads", resource_type: "image" },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      },
+    );
+    stream.end(file.buffer);
+  });
 
 // Get all active ads by position
 router.get("/", async (req, res) => {
@@ -34,9 +47,12 @@ router.get("/admin/all", protect, async (req, res) => {
 router.post("/", protect, upload.single("image"), async (req, res) => {
   try {
     const { title, link, page, placement, order, isActive } = req.body;
-    const imageUrl = req.file
-      ? `/uploads/${req.file.filename}`
-      : req.body.imageUrl;
+    let imageUrl = req.body.imageUrl;
+
+    if (req.file) {
+      const uploaded = await uploadToCloudinary(req.file);
+      imageUrl = uploaded.secure_url;
+    }
 
     const ad = new Ad({
       title,
@@ -64,7 +80,8 @@ router.put("/:id", protect, upload.single("image"), async (req, res) => {
     const update = { title, link, isActive };
 
     if (req.file) {
-      update.imageUrl = `/uploads/${req.file.filename}`;
+      const uploaded = await uploadToCloudinary(req.file);
+      update.imageUrl = uploaded.secure_url;
     } else if (req.body.imageUrl) {
       update.imageUrl = req.body.imageUrl;
     }
